@@ -1,61 +1,112 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="nl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Todo App</title>
   <style>
+    :root[data-theme="light"] {
+      --bg:         #f0f2f5;
+      --surface:    #ffffff;
+      --border:     #e0e0e0;
+      --text:       #1a1a2e;
+      --text-sub:   #666;
+      --text-muted: #aaa;
+      --accent:     #6366f1;
+      --accent-hov: #4f46e5;
+      --danger:     #ef4444;
+      --done-text:  #aaa;
+      --shadow:     0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    :root[data-theme="dark"] {
+      --bg:         #0f1117;
+      --surface:    #1e2130;
+      --border:     #2e3250;
+      --text:       #e8eaf6;
+      --text-sub:   #9fa8c7;
+      --text-muted: #5c6480;
+      --accent:     #818cf8;
+      --accent-hov: #6366f1;
+      --danger:     #f87171;
+      --done-text:  #5c6480;
+      --shadow:     0 4px 24px rgba(0,0,0,0.4);
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, sans-serif;
-      background: #f0f2f5;
+      background: var(--bg);
       display: flex;
       justify-content: center;
       padding: 40px 16px;
       min-height: 100vh;
+      transition: background 0.2s;
     }
 
     .app {
-      background: #fff;
+      background: var(--surface);
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
       padding: 32px;
       height: fit-content;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
     }
 
     h1 {
       font-size: 1.6rem;
       font-weight: 700;
-      color: #1a1a2e;
-      margin-bottom: 24px;
+      color: var(--text);
     }
 
+    .theme-toggle {
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--text);
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+
+    /* Input row */
     .input-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
 
     input[type="text"] {
       flex: 1;
       padding: 10px 14px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--border);
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
     }
-
-    input[type="text"]:focus {
-      border-color: #6366f1;
-    }
+    input[type="text"]::placeholder { color: var(--text-muted); }
+    input[type="text"]:focus { border-color: var(--accent); }
 
     button.add-btn {
       padding: 10px 18px;
-      background: #6366f1;
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -63,128 +114,200 @@
       cursor: pointer;
       font-weight: 600;
       transition: background 0.2s;
+      white-space: nowrap;
+    }
+    button.add-btn:hover { background: var(--accent-hov); }
+
+    /* Priority picker */
+    .priority-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      align-items: center;
     }
 
-    button.add-btn:hover { background: #4f46e5; }
+    .priority-row span {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-right: 2px;
+    }
 
+    .prio-btn {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 2px solid transparent;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: none;
+    }
+
+    .prio-btn[data-p="high"]   { color: #ef4444; border-color: #fca5a5; }
+    .prio-btn[data-p="medium"] { color: #f59e0b; border-color: #fcd34d; }
+    .prio-btn[data-p="low"]    { color: #22c55e; border-color: #86efac; }
+
+    .prio-btn[data-p="high"].selected   { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .prio-btn[data-p="medium"].selected { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+    .prio-btn[data-p="low"].selected    { background: #22c55e; color: #fff; border-color: #22c55e; }
+
+    /* Filters */
     .filters {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .filters button {
       flex: 1;
       padding: 6px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--border);
       border-radius: 6px;
       background: none;
       cursor: pointer;
-      font-size: 0.85rem;
-      color: #666;
+      font-size: 0.82rem;
+      color: var(--text-sub);
       transition: all 0.15s;
+      white-space: nowrap;
     }
-
     .filters button.active {
-      border-color: #6366f1;
-      color: #6366f1;
+      border-color: var(--accent);
+      color: var(--accent);
       font-weight: 600;
     }
 
-    ul {
-      list-style: none;
-    }
+    /* List */
+    ul { list-style: none; }
 
     li {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 12px 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--border);
       animation: fadeIn 0.15s ease;
     }
+    li:last-child { border-bottom: none; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-4px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    li:last-child { border-bottom: none; }
-
     li input[type="checkbox"] {
       width: 18px;
       height: 18px;
-      accent-color: #6366f1;
+      accent-color: var(--accent);
       cursor: pointer;
       flex-shrink: 0;
     }
 
-    li span {
+    .prio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .prio-dot.high   { background: #ef4444; }
+    .prio-dot.medium { background: #f59e0b; }
+    .prio-dot.low    { background: #22c55e; }
+    .prio-dot.none   { background: transparent; border: 1px solid var(--border); }
+
+    li span.task-text {
       flex: 1;
       font-size: 0.95rem;
-      color: #333;
+      color: var(--text);
       word-break: break-word;
     }
-
-    li.done span {
+    li.done span.task-text {
       text-decoration: line-through;
-      color: #aaa;
+      color: var(--done-text);
     }
+
+    .prio-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .prio-badge.high   { background: #fee2e2; color: #ef4444; }
+    .prio-badge.medium { background: #fef3c7; color: #d97706; }
+    .prio-badge.low    { background: #dcfce7; color: #16a34a; }
+
+    [data-theme="dark"] .prio-badge.high   { background: #450a0a; color: #f87171; }
+    [data-theme="dark"] .prio-badge.medium { background: #451a03; color: #fbbf24; }
+    [data-theme="dark"] .prio-badge.low    { background: #052e16; color: #4ade80; }
 
     li button.delete-btn {
       background: none;
       border: none;
-      color: #ccc;
+      color: var(--text-muted);
       cursor: pointer;
       font-size: 1.1rem;
       line-height: 1;
       transition: color 0.15s;
       flex-shrink: 0;
     }
-
-    li button.delete-btn:hover { color: #ef4444; }
+    li button.delete-btn:hover { color: var(--danger); }
 
     .empty {
       text-align: center;
-      color: #bbb;
+      color: var(--text-muted);
       font-size: 0.9rem;
       padding: 24px 0;
     }
 
+    /* Footer */
     .footer {
       margin-top: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.82rem;
-      color: #aaa;
+      color: var(--text-muted);
     }
-
     .footer button {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--text-muted);
       cursor: pointer;
       font-size: 0.82rem;
       text-decoration: underline;
     }
-
-    .footer button:hover { color: #ef4444; }
+    .footer button:hover { color: var(--danger); }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>📝 Todo</h1>
+    <div class="header">
+      <h1>📝 Todo</h1>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
+    </div>
 
     <div class="input-row">
       <input type="text" id="todo-input" placeholder="Nieuwe taak..." />
       <button class="add-btn" onclick="addTodo()">Voeg toe</button>
     </div>
 
+    <div class="priority-row">
+      <span>Prioriteit:</span>
+      <button class="prio-btn selected" data-p="none" onclick="selectPrio('none')">Geen</button>
+      <button class="prio-btn" data-p="high"   onclick="selectPrio('high')">🔴 Hoog</button>
+      <button class="prio-btn" data-p="medium" onclick="selectPrio('medium')">🟡 Middel</button>
+      <button class="prio-btn" data-p="low"    onclick="selectPrio('low')">🟢 Laag</button>
+    </div>
+
     <div class="filters">
-      <button onclick="setFilter('all')" id="filter-all" class="active">Alles</button>
+      <button onclick="setFilter('all')"    id="filter-all"    class="active">Alles</button>
       <button onclick="setFilter('active')" id="filter-active">Actief</button>
-      <button onclick="setFilter('done')" id="filter-done">Klaar</button>
+      <button onclick="setFilter('done')"   id="filter-done">Klaar</button>
+      <button onclick="setFilter('high')"   id="filter-high">🔴 Hoog</button>
+      <button onclick="setFilter('medium')" id="filter-medium">🟡 Middel</button>
+      <button onclick="setFilter('low')"    id="filter-low">🟢 Laag</button>
     </div>
 
     <ul id="todo-list"></ul>
@@ -197,45 +320,86 @@
   </div>
 
   <script>
-    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+    let todos  = JSON.parse(localStorage.getItem('todos') || '[]');
     let filter = 'all';
+    let selectedPrio = 'none';
 
+    // ── Theme ──────────────────────────────────────────
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(theme) {
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // ── Priority picker ────────────────────────────────
+    function selectPrio(p) {
+      selectedPrio = p;
+      document.querySelectorAll('.prio-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.p === p);
+      });
+    }
+
+    // ── Save & render ──────────────────────────────────
     function save() {
       localStorage.setItem('todos', JSON.stringify(todos));
     }
 
+    const PRIO_ORDER = { high: 0, medium: 1, low: 2, none: 3 };
+
     function render() {
-      const list = document.getElementById('todo-list');
-      const emptyMsg = document.getElementById('empty-msg');
+      const list      = document.getElementById('todo-list');
+      const emptyMsg  = document.getElementById('empty-msg');
       const remaining = todos.filter(t => !t.done).length;
 
       document.getElementById('remaining').textContent =
         `${remaining} taak${remaining !== 1 ? 'en' : ''} over`;
 
-      const visible = todos.filter(t =>
-        filter === 'all' ? true :
-        filter === 'active' ? !t.done :
-        t.done
+      let visible = todos.filter(t => {
+        if (filter === 'all')    return true;
+        if (filter === 'active') return !t.done;
+        if (filter === 'done')   return t.done;
+        return t.priority === filter; // high / medium / low
+      });
+
+      // Sort: priority first, then insertion order
+      visible = [...visible].sort((a, b) =>
+        PRIO_ORDER[a.priority || 'none'] - PRIO_ORDER[b.priority || 'none']
       );
 
       list.innerHTML = '';
       emptyMsg.style.display = visible.length === 0 ? 'block' : 'none';
 
       visible.forEach(todo => {
+        const prio = todo.priority || 'none';
         const li = document.createElement('li');
         if (todo.done) li.classList.add('done');
 
+        const badge = prio !== 'none'
+          ? `<span class="prio-badge ${prio}">${prio === 'high' ? 'Hoog' : prio === 'medium' ? 'Middel' : 'Laag'}</span>`
+          : '';
+
         li.innerHTML = `
-          <input type="checkbox" ${todo.done ? 'checked' : ''}
-            onchange="toggle(${todo.id})" />
-          <span>${escapeHtml(todo.text)}</span>
+          <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggle(${todo.id})" />
+          <span class="prio-dot ${prio}"></span>
+          <span class="task-text">${escapeHtml(todo.text)}</span>
+          ${badge}
           <button class="delete-btn" onclick="remove(${todo.id})" title="Verwijder">✕</button>
         `;
         list.appendChild(li);
       });
 
-      ['all', 'active', 'done'].forEach(f => {
-        document.getElementById(`filter-${f}`).classList.toggle('active', filter === f);
+      ['all','active','done','high','medium','low'].forEach(f => {
+        document.getElementById(`filter-${f}`)?.classList.toggle('active', filter === f);
       });
     }
 
@@ -243,11 +407,12 @@
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
+    // ── Actions ────────────────────────────────────────
     function addTodo() {
       const input = document.getElementById('todo-input');
-      const text = input.value.trim();
+      const text  = input.value.trim();
       if (!text) return;
-      todos.unshift({ id: Date.now(), text, done: false });
+      todos.unshift({ id: Date.now(), text, done: false, priority: selectedPrio });
       input.value = '';
       save();
       render();
