@@ -50,7 +50,7 @@
       border-radius: 12px;
       box-shadow: var(--shadow);
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       padding: 32px;
       height: fit-content;
       transition: background 0.2s, box-shadow 0.2s;
@@ -64,11 +64,7 @@
       margin-bottom: 24px;
     }
 
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text);
-    }
+    h1 { font-size: 1.6rem; font-weight: 700; color: var(--text); }
 
     .theme-toggle {
       background: none;
@@ -78,16 +74,16 @@
       cursor: pointer;
       font-size: 1.1rem;
       line-height: 1;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.2s;
       color: var(--text);
     }
     .theme-toggle:hover { border-color: var(--accent); }
 
-    /* Input row */
+    /* Input */
     .input-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     input[type="text"] {
@@ -99,7 +95,7 @@
       outline: none;
       background: var(--surface);
       color: var(--text);
-      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      transition: border-color 0.2s;
     }
     input[type="text"]::placeholder { color: var(--text-muted); }
     input[type="text"]:focus { border-color: var(--accent); }
@@ -118,12 +114,52 @@
     }
     button.add-btn:hover { background: var(--accent-hov); }
 
+    /* Deadline row */
+    .deadline-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .deadline-row span {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    input[type="date"] {
+      padding: 6px 10px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      color-scheme: light dark;
+    }
+    input[type="date"]:focus { border-color: var(--accent); }
+
+    .clear-date-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0 4px;
+      transition: color 0.15s;
+    }
+    .clear-date-btn:hover { color: var(--danger); }
+
     /* Priority picker */
     .priority-row {
       display: flex;
       gap: 6px;
       margin-bottom: 20px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .priority-row span {
@@ -142,11 +178,12 @@
       transition: all 0.15s;
       background: none;
     }
-
+    .prio-btn[data-p="none"]   { color: var(--text-sub); border-color: var(--border); }
     .prio-btn[data-p="high"]   { color: #ef4444; border-color: #fca5a5; }
     .prio-btn[data-p="medium"] { color: #f59e0b; border-color: #fcd34d; }
     .prio-btn[data-p="low"]    { color: #22c55e; border-color: #86efac; }
 
+    .prio-btn[data-p="none"].selected   { background: var(--border); color: var(--text); }
     .prio-btn[data-p="high"].selected   { background: #ef4444; color: #fff; border-color: #ef4444; }
     .prio-btn[data-p="medium"].selected { background: #f59e0b; color: #fff; border-color: #f59e0b; }
     .prio-btn[data-p="low"].selected    { background: #22c55e; color: #fff; border-color: #22c55e; }
@@ -176,19 +213,25 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .filters button.overdue-filter.active {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
 
     /* List */
     ul { list-style: none; }
 
     li {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
       padding: 12px 0;
       border-bottom: 1px solid var(--border);
       animation: fadeIn 0.15s ease;
     }
     li:last-child { border-bottom: none; }
+    li.overdue { background: linear-gradient(90deg, #fff5f5 0%, transparent 100%); border-radius: 6px; padding-left: 6px; }
+    [data-theme="dark"] li.overdue { background: linear-gradient(90deg, #2d1515 0%, transparent 100%); }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-4px); }
@@ -201,6 +244,7 @@
       accent-color: var(--accent);
       cursor: pointer;
       flex-shrink: 0;
+      margin-top: 2px;
     }
 
     .prio-dot {
@@ -208,14 +252,22 @@
       height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
+      margin-top: 6px;
     }
     .prio-dot.high   { background: #ef4444; }
     .prio-dot.medium { background: #f59e0b; }
     .prio-dot.low    { background: #22c55e; }
     .prio-dot.none   { background: transparent; border: 1px solid var(--border); }
 
-    li span.task-text {
+    .task-body {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    li span.task-text {
       font-size: 0.95rem;
       color: var(--text);
       word-break: break-word;
@@ -223,6 +275,34 @@
     li.done span.task-text {
       text-decoration: line-through;
       color: var(--done-text);
+    }
+
+    /* Deadline chip */
+    .deadline-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .deadline-chip.upcoming  { background: #eff6ff; color: #3b82f6; }
+    .deadline-chip.today     { background: #fff7ed; color: #f97316; font-weight: 700; }
+    .deadline-chip.overdue   { background: #fee2e2; color: #ef4444; font-weight: 700; }
+    .deadline-chip.done-date { background: var(--bg); color: var(--text-muted); text-decoration: line-through; }
+
+    [data-theme="dark"] .deadline-chip.upcoming  { background: #1e3a5f; color: #93c5fd; }
+    [data-theme="dark"] .deadline-chip.today     { background: #431407; color: #fb923c; }
+    [data-theme="dark"] .deadline-chip.overdue   { background: #450a0a; color: #f87171; }
+    [data-theme="dark"] .deadline-chip.done-date { background: transparent; color: var(--text-muted); }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .prio-badge {
@@ -251,6 +331,7 @@
       line-height: 1;
       transition: color 0.15s;
       flex-shrink: 0;
+      padding-top: 2px;
     }
     li button.delete-btn:hover { color: var(--danger); }
 
@@ -293,21 +374,28 @@
       <button class="add-btn" onclick="addTodo()">Voeg toe</button>
     </div>
 
+    <div class="deadline-row">
+      <span>📅 Deadline:</span>
+      <input type="date" id="deadline-input" />
+      <button class="clear-date-btn" onclick="clearDate()" title="Datum wissen">✕</button>
+    </div>
+
     <div class="priority-row">
       <span>Prioriteit:</span>
-      <button class="prio-btn selected" data-p="none" onclick="selectPrio('none')">Geen</button>
-      <button class="prio-btn" data-p="high"   onclick="selectPrio('high')">🔴 Hoog</button>
-      <button class="prio-btn" data-p="medium" onclick="selectPrio('medium')">🟡 Middel</button>
-      <button class="prio-btn" data-p="low"    onclick="selectPrio('low')">🟢 Laag</button>
+      <button class="prio-btn selected" data-p="none"   onclick="selectPrio('none')">Geen</button>
+      <button class="prio-btn"          data-p="high"   onclick="selectPrio('high')">🔴 Hoog</button>
+      <button class="prio-btn"          data-p="medium" onclick="selectPrio('medium')">🟡 Middel</button>
+      <button class="prio-btn"          data-p="low"    onclick="selectPrio('low')">🟢 Laag</button>
     </div>
 
     <div class="filters">
-      <button onclick="setFilter('all')"    id="filter-all"    class="active">Alles</button>
-      <button onclick="setFilter('active')" id="filter-active">Actief</button>
-      <button onclick="setFilter('done')"   id="filter-done">Klaar</button>
-      <button onclick="setFilter('high')"   id="filter-high">🔴 Hoog</button>
-      <button onclick="setFilter('medium')" id="filter-medium">🟡 Middel</button>
-      <button onclick="setFilter('low')"    id="filter-low">🟢 Laag</button>
+      <button onclick="setFilter('all')"     id="filter-all"     class="active">Alles</button>
+      <button onclick="setFilter('active')"  id="filter-active">Actief</button>
+      <button onclick="setFilter('done')"    id="filter-done">Klaar</button>
+      <button onclick="setFilter('overdue')" id="filter-overdue" class="overdue-filter">🔴 Verlopen</button>
+      <button onclick="setFilter('high')"    id="filter-high">🔴 Hoog</button>
+      <button onclick="setFilter('medium')"  id="filter-medium">🟡 Middel</button>
+      <button onclick="setFilter('low')"     id="filter-low">🟢 Laag</button>
     </div>
 
     <ul id="todo-list"></ul>
@@ -320,8 +408,8 @@
   </div>
 
   <script>
-    let todos  = JSON.parse(localStorage.getItem('todos') || '[]');
-    let filter = 'all';
+    let todos        = JSON.parse(localStorage.getItem('todos') || '[]');
+    let filter       = 'all';
     let selectedPrio = 'none';
 
     // ── Theme ──────────────────────────────────────────
@@ -336,7 +424,6 @@
       localStorage.setItem('theme', next);
       updateThemeIcon(next);
     }
-
     function updateThemeIcon(theme) {
       document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
     }
@@ -344,9 +431,46 @@
     // ── Priority picker ────────────────────────────────
     function selectPrio(p) {
       selectedPrio = p;
-      document.querySelectorAll('.prio-btn').forEach(btn => {
-        btn.classList.toggle('selected', btn.dataset.p === p);
-      });
+      document.querySelectorAll('.prio-btn').forEach(btn =>
+        btn.classList.toggle('selected', btn.dataset.p === p)
+      );
+    }
+
+    function clearDate() {
+      document.getElementById('deadline-input').value = '';
+    }
+
+    // ── Deadline helpers ───────────────────────────────
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function deadlineStatus(deadline, done) {
+      if (!deadline) return null;
+      if (done) return 'done-date';
+      if (deadline < today()) return 'overdue';
+      if (deadline === today()) return 'today';
+      return 'upcoming';
+    }
+
+    function deadlineLabel(deadline, done) {
+      if (!deadline) return null;
+      if (done) return formatDate(deadline);
+      const diff = daysDiff(deadline);
+      if (diff < 0) return `⚠️ ${Math.abs(diff)}d verlopen — ${formatDate(deadline)}`;
+      if (diff === 0) return `⏰ Vandaag — ${formatDate(deadline)}`;
+      if (diff === 1) return `📅 Morgen`;
+      return `📅 Over ${diff} dagen — ${formatDate(deadline)}`;
+    }
+
+    function daysDiff(dateStr) {
+      const t = new Date(today());
+      const d = new Date(dateStr);
+      return Math.round((d - t) / 86400000);
+    }
+
+    function formatDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
     }
 
     // ── Save & render ──────────────────────────────────
@@ -356,49 +480,77 @@
 
     const PRIO_ORDER = { high: 0, medium: 1, low: 2, none: 3 };
 
+    function isOverdue(t) {
+      return t.deadline && !t.done && t.deadline < today();
+    }
+
     function render() {
-      const list      = document.getElementById('todo-list');
-      const emptyMsg  = document.getElementById('empty-msg');
-      const remaining = todos.filter(t => !t.done).length;
+      const list     = document.getElementById('todo-list');
+      const emptyMsg = document.getElementById('empty-msg');
+      const overdueCount = todos.filter(isOverdue).length;
+      const remaining    = todos.filter(t => !t.done).length;
 
       document.getElementById('remaining').textContent =
-        `${remaining} taak${remaining !== 1 ? 'en' : ''} over`;
+        `${remaining} taak${remaining !== 1 ? 'en' : ''} over` +
+        (overdueCount ? ` · ${overdueCount} verlopen` : '');
 
       let visible = todos.filter(t => {
-        if (filter === 'all')    return true;
-        if (filter === 'active') return !t.done;
-        if (filter === 'done')   return t.done;
-        return t.priority === filter; // high / medium / low
+        if (filter === 'all')     return true;
+        if (filter === 'active')  return !t.done;
+        if (filter === 'done')    return t.done;
+        if (filter === 'overdue') return isOverdue(t);
+        return t.priority === filter;
       });
 
-      // Sort: priority first, then insertion order
-      visible = [...visible].sort((a, b) =>
-        PRIO_ORDER[a.priority || 'none'] - PRIO_ORDER[b.priority || 'none']
-      );
+      // Sort: overdue first, then priority, then deadline
+      visible = [...visible].sort((a, b) => {
+        const aOver = isOverdue(a) ? 0 : 1;
+        const bOver = isOverdue(b) ? 0 : 1;
+        if (aOver !== bOver) return aOver - bOver;
+        const pDiff = PRIO_ORDER[a.priority || 'none'] - PRIO_ORDER[b.priority || 'none'];
+        if (pDiff !== 0) return pDiff;
+        if (a.deadline && b.deadline) return a.deadline.localeCompare(b.deadline);
+        if (a.deadline) return -1;
+        if (b.deadline) return 1;
+        return 0;
+      });
 
       list.innerHTML = '';
       emptyMsg.style.display = visible.length === 0 ? 'block' : 'none';
 
       visible.forEach(todo => {
-        const prio = todo.priority || 'none';
-        const li = document.createElement('li');
-        if (todo.done) li.classList.add('done');
+        const prio   = todo.priority || 'none';
+        const li     = document.createElement('li');
+        if (todo.done)      li.classList.add('done');
+        if (isOverdue(todo)) li.classList.add('overdue');
 
         const badge = prio !== 'none'
           ? `<span class="prio-badge ${prio}">${prio === 'high' ? 'Hoog' : prio === 'medium' ? 'Middel' : 'Laag'}</span>`
           : '';
 
+        const dlStatus = deadlineStatus(todo.deadline, todo.done);
+        const dlLabel  = deadlineLabel(todo.deadline, todo.done);
+        const dlChip   = dlLabel
+          ? `<span class="deadline-chip ${dlStatus}">${dlLabel}</span>`
+          : '';
+
+        const meta = (badge || dlChip)
+          ? `<div class="task-meta">${badge}${dlChip}</div>`
+          : '';
+
         li.innerHTML = `
           <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggle(${todo.id})" />
           <span class="prio-dot ${prio}"></span>
-          <span class="task-text">${escapeHtml(todo.text)}</span>
-          ${badge}
+          <div class="task-body">
+            <span class="task-text">${escapeHtml(todo.text)}</span>
+            ${meta}
+          </div>
           <button class="delete-btn" onclick="remove(${todo.id})" title="Verwijder">✕</button>
         `;
         list.appendChild(li);
       });
 
-      ['all','active','done','high','medium','low'].forEach(f => {
+      ['all','active','done','overdue','high','medium','low'].forEach(f => {
         document.getElementById(`filter-${f}`)?.classList.toggle('active', filter === f);
       });
     }
@@ -409,10 +561,11 @@
 
     // ── Actions ────────────────────────────────────────
     function addTodo() {
-      const input = document.getElementById('todo-input');
-      const text  = input.value.trim();
+      const input    = document.getElementById('todo-input');
+      const deadline = document.getElementById('deadline-input').value || null;
+      const text     = input.value.trim();
       if (!text) return;
-      todos.unshift({ id: Date.now(), text, done: false, priority: selectedPrio });
+      todos.unshift({ id: Date.now(), text, done: false, priority: selectedPrio, deadline });
       input.value = '';
       save();
       render();
