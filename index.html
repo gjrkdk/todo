@@ -18,7 +18,6 @@
       --done-text:  #aaa;
       --shadow:     0 4px 20px rgba(0,0,0,0.08);
     }
-
     :root[data-theme="dark"] {
       --bg:         #0f1117;
       --surface:    #1e2130;
@@ -63,29 +62,95 @@
       justify-content: space-between;
       margin-bottom: 24px;
     }
-
     h1 { font-size: 1.6rem; font-weight: 700; color: var(--text); }
 
-    .theme-toggle {
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+
+    .icon-btn {
       background: none;
       border: 2px solid var(--border);
       border-radius: 8px;
       padding: 6px 10px;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1rem;
       line-height: 1;
       transition: border-color 0.2s;
       color: var(--text);
+      position: relative;
     }
-    .theme-toggle:hover { border-color: var(--accent); }
+    .icon-btn:hover { border-color: var(--accent); }
+
+    /* Export dropdown */
+    .export-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 130px;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .export-menu.open { display: block; }
+    .export-menu button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .export-menu button:hover { background: var(--bg); }
+
+    /* Search */
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    #search-input {
+      width: 100%;
+      padding: 9px 14px 9px 34px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    #search-input::placeholder { color: var(--text-muted); }
+    #search-input:focus { border-color: var(--accent); }
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .search-clear.visible { display: block; }
 
     /* Input */
-    .input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
+    .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
     input[type="text"] {
       flex: 1;
       padding: 10px 14px;
@@ -114,20 +179,30 @@
     }
     button.add-btn:hover { background: var(--accent-hov); }
 
-    /* Deadline row */
-    .deadline-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* Note input */
+    .note-input-row {
       margin-bottom: 10px;
     }
-
-    .deadline-row span {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      white-space: nowrap;
+    textarea#note-input {
+      width: 100%;
+      padding: 8px 14px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+      transition: border-color 0.2s;
     }
+    textarea#note-input::placeholder { color: var(--text-muted); }
+    textarea#note-input:focus { border-color: var(--accent); }
 
+    /* Deadline row */
+    .deadline-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .deadline-row span { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; }
     input[type="date"] {
       padding: 6px 10px;
       border: 2px solid var(--border);
@@ -141,93 +216,47 @@
       color-scheme: light dark;
     }
     input[type="date"]:focus { border-color: var(--accent); }
-
     .clear-date-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0 4px;
-      transition: color 0.15s;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: 0 4px; transition: color 0.15s;
     }
     .clear-date-btn:hover { color: var(--danger); }
 
     /* Priority picker */
-    .priority-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .priority-row span {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      margin-right: 2px;
-    }
-
+    .priority-row { display: flex; gap: 6px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+    .priority-row span { font-size: 0.8rem; color: var(--text-sub); margin-right: 2px; }
     .prio-btn {
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 2px solid transparent;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      background: none;
+      padding: 4px 12px; border-radius: 20px; border: 2px solid transparent;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; background: none;
     }
     .prio-btn[data-p="none"]   { color: var(--text-sub); border-color: var(--border); }
     .prio-btn[data-p="high"]   { color: #ef4444; border-color: #fca5a5; }
     .prio-btn[data-p="medium"] { color: #f59e0b; border-color: #fcd34d; }
     .prio-btn[data-p="low"]    { color: #22c55e; border-color: #86efac; }
-
     .prio-btn[data-p="none"].selected   { background: var(--border); color: var(--text); }
     .prio-btn[data-p="high"].selected   { background: #ef4444; color: #fff; border-color: #ef4444; }
     .prio-btn[data-p="medium"].selected { background: #f59e0b; color: #fff; border-color: #f59e0b; }
     .prio-btn[data-p="low"].selected    { background: #22c55e; color: #fff; border-color: #22c55e; }
 
-    /* Filters */
-    .filters {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
+    /* Search highlight */
+    mark { background: #fef08a; color: inherit; border-radius: 2px; padding: 0 1px; }
+    [data-theme="dark"] mark { background: #713f12; color: #fef08a; }
 
+    /* Filters */
+    .filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
     .filters button {
-      flex: 1;
-      padding: 6px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      background: none;
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: var(--text-sub);
-      transition: all 0.15s;
-      white-space: nowrap;
+      flex: 1; padding: 6px; border: 2px solid var(--border); border-radius: 6px;
+      background: none; cursor: pointer; font-size: 0.82rem; color: var(--text-sub);
+      transition: all 0.15s; white-space: nowrap;
     }
-    .filters button.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 600;
-    }
-    .filters button.overdue-filter.active {
-      border-color: #ef4444;
-      color: #ef4444;
-    }
+    .filters button.active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .filters button.overdue-filter.active { border-color: #ef4444; color: #ef4444; }
 
     /* List */
     ul { list-style: none; }
-
     li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      animation: fadeIn 0.15s ease;
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 0; border-bottom: 1px solid var(--border); animation: fadeIn 0.15s ease;
     }
     li:last-child { border-bottom: none; }
     li.overdue { background: linear-gradient(90deg, #fff5f5 0%, transparent 100%); border-radius: 6px; padding-left: 6px; }
@@ -239,125 +268,119 @@
     }
 
     li input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent);
-      cursor: pointer;
-      flex-shrink: 0;
-      margin-top: 2px;
+      width: 18px; height: 18px; accent-color: var(--accent);
+      cursor: pointer; flex-shrink: 0; margin-top: 2px;
     }
 
     .prio-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 6px;
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
     }
     .prio-dot.high   { background: #ef4444; }
     .prio-dot.medium { background: #f59e0b; }
     .prio-dot.low    { background: #22c55e; }
     .prio-dot.none   { background: transparent; border: 1px solid var(--border); }
 
-    .task-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      min-width: 0;
-    }
+    .task-body { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 
-    li span.task-text {
-      font-size: 0.95rem;
-      color: var(--text);
+    li span.task-text { font-size: 0.95rem; color: var(--text); word-break: break-word; }
+    li.done span.task-text { text-decoration: line-through; color: var(--done-text); }
+
+    /* Note display */
+    .task-note {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      line-height: 1.4;
+      margin-top: 2px;
+      white-space: pre-wrap;
       word-break: break-word;
     }
-    li.done span.task-text {
-      text-decoration: line-through;
-      color: var(--done-text);
+    li.done .task-note { color: var(--text-muted); }
+
+    /* Note expand/edit */
+    .note-toggle {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.75rem; padding: 0;
+      text-decoration: underline; text-underline-offset: 2px;
+      transition: color 0.15s;
+    }
+    .note-toggle:hover { color: var(--accent); }
+
+    .note-edit-area {
+      display: none;
+      margin-top: 4px;
+    }
+    .note-edit-area.open { display: block; }
+    .note-edit-area textarea {
+      width: 100%;
+      padding: 6px 10px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+      min-height: 52px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .note-edit-area textarea:focus { border-color: var(--accent); }
+    .note-save-btn {
+      margin-top: 4px;
+      padding: 4px 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 600;
     }
 
     /* Deadline chip */
     .deadline-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 10px;
-      width: fit-content;
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; font-weight: 500; padding: 2px 8px;
+      border-radius: 10px; width: fit-content;
     }
     .deadline-chip.upcoming  { background: #eff6ff; color: #3b82f6; }
     .deadline-chip.today     { background: #fff7ed; color: #f97316; font-weight: 700; }
     .deadline-chip.overdue   { background: #fee2e2; color: #ef4444; font-weight: 700; }
     .deadline-chip.done-date { background: var(--bg); color: var(--text-muted); text-decoration: line-through; }
-
     [data-theme="dark"] .deadline-chip.upcoming  { background: #1e3a5f; color: #93c5fd; }
     [data-theme="dark"] .deadline-chip.today     { background: #431407; color: #fb923c; }
     [data-theme="dark"] .deadline-chip.overdue   { background: #450a0a; color: #f87171; }
     [data-theme="dark"] .deadline-chip.done-date { background: transparent; color: var(--text-muted); }
 
-    .task-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    .task-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
     .prio-badge {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 10px;
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
+      font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+      flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.03em;
     }
     .prio-badge.high   { background: #fee2e2; color: #ef4444; }
     .prio-badge.medium { background: #fef3c7; color: #d97706; }
     .prio-badge.low    { background: #dcfce7; color: #16a34a; }
-
     [data-theme="dark"] .prio-badge.high   { background: #450a0a; color: #f87171; }
     [data-theme="dark"] .prio-badge.medium { background: #451a03; color: #fbbf24; }
     [data-theme="dark"] .prio-badge.low    { background: #052e16; color: #4ade80; }
 
     li button.delete-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 1.1rem;
-      line-height: 1;
-      transition: color 0.15s;
-      flex-shrink: 0;
-      padding-top: 2px;
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      font-size: 1.1rem; line-height: 1; transition: color 0.15s; flex-shrink: 0; padding-top: 2px;
     }
     li button.delete-btn:hover { color: var(--danger); }
 
-    .empty {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      padding: 24px 0;
-    }
+    .empty { text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 24px 0; }
 
     /* Footer */
     .footer {
-      margin-top: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-muted);
+      margin-top: 16px; display: flex; justify-content: space-between;
+      align-items: center; font-size: 0.82rem; color: var(--text-muted);
     }
     .footer button {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.82rem;
-      text-decoration: underline;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.82rem; text-decoration: underline;
     }
     .footer button:hover { color: var(--danger); }
   </style>
@@ -366,20 +389,46 @@
   <div class="app">
     <div class="header">
       <h1>📝 Todo</h1>
-      <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
+      <div class="header-actions">
+        <!-- Export knop -->
+        <div class="icon-btn" id="export-btn" onclick="toggleExportMenu()" title="Exporteren">
+          ⬇️
+          <div class="export-menu" id="export-menu">
+            <button onclick="exportCSV()">📄 Exporteer CSV</button>
+            <button onclick="exportJSON()">🗂️ Exporteer JSON</button>
+          </div>
+        </div>
+        <!-- Dark mode toggle -->
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-icon">🌙</button>
+      </div>
     </div>
 
+    <!-- Zoekbalk -->
+    <div class="search-row">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Zoek in taken..." oninput="onSearch()" />
+      <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+
+    <!-- Nieuwe taak -->
     <div class="input-row">
       <input type="text" id="todo-input" placeholder="Nieuwe taak..." />
       <button class="add-btn" onclick="addTodo()">Voeg toe</button>
     </div>
 
+    <!-- Notitie invoer -->
+    <div class="note-input-row">
+      <textarea id="note-input" placeholder="Notitie (optioneel)..."></textarea>
+    </div>
+
+    <!-- Deadline -->
     <div class="deadline-row">
       <span>📅 Deadline:</span>
       <input type="date" id="deadline-input" />
       <button class="clear-date-btn" onclick="clearDate()" title="Datum wissen">✕</button>
     </div>
 
+    <!-- Prioriteit -->
     <div class="priority-row">
       <span>Prioriteit:</span>
       <button class="prio-btn selected" data-p="none"   onclick="selectPrio('none')">Geen</button>
@@ -388,6 +437,7 @@
       <button class="prio-btn"          data-p="low"    onclick="selectPrio('low')">🟢 Laag</button>
     </div>
 
+    <!-- Filters -->
     <div class="filters">
       <button onclick="setFilter('all')"     id="filter-all"     class="active">Alles</button>
       <button onclick="setFilter('active')"  id="filter-active">Actief</button>
@@ -411,6 +461,7 @@
     let todos        = JSON.parse(localStorage.getItem('todos') || '[]');
     let filter       = 'all';
     let selectedPrio = 'none';
+    let searchQuery  = '';
 
     // ── Theme ──────────────────────────────────────────
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -428,6 +479,75 @@
       document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
+    // ── Export menu ────────────────────────────────────
+    function toggleExportMenu() {
+      document.getElementById('export-menu').classList.toggle('open');
+    }
+    document.addEventListener('click', e => {
+      if (!document.getElementById('export-btn').contains(e.target)) {
+        document.getElementById('export-menu').classList.remove('open');
+      }
+    });
+
+    function exportCSV() {
+      const headers = ['Taak', 'Notitie', 'Prioriteit', 'Deadline', 'Status', 'Aangemaakt'];
+      const rows = todos.map(t => [
+        `"${t.text.replace(/"/g, '""')}"`,
+        `"${(t.note || '').replace(/"/g, '""')}"`,
+        t.priority || 'geen',
+        t.deadline || '',
+        t.done ? 'voltooid' : 'actief',
+        new Date(t.id).toLocaleDateString('nl-NL'),
+      ]);
+      const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+      downloadFile('taken.csv', csv, 'text/csv');
+      document.getElementById('export-menu').classList.remove('open');
+    }
+
+    function exportJSON() {
+      const data = todos.map(t => ({
+        id: t.id,
+        taak: t.text,
+        notitie: t.note || null,
+        prioriteit: t.priority || 'geen',
+        deadline: t.deadline || null,
+        status: t.done ? 'voltooid' : 'actief',
+        aangemaakt: new Date(t.id).toISOString(),
+      }));
+      downloadFile('taken.json', JSON.stringify(data, null, 2), 'application/json');
+      document.getElementById('export-menu').classList.remove('open');
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ── Zoekfunctie ────────────────────────────────────
+    function onSearch() {
+      searchQuery = document.getElementById('search-input').value.toLowerCase();
+      const clearBtn = document.getElementById('search-clear');
+      clearBtn.classList.toggle('visible', searchQuery.length > 0);
+      render();
+    }
+
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      searchQuery = '';
+      document.getElementById('search-clear').classList.remove('visible');
+      render();
+    }
+
+    function highlight(text, query) {
+      if (!query) return escapeHtml(text);
+      const escaped = escapeHtml(text);
+      const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return escaped.replace(new RegExp(`(${escapedQuery})`, 'gi'), '<mark>$1</mark>');
+    }
+
     // ── Priority picker ────────────────────────────────
     function selectPrio(p) {
       selectedPrio = p;
@@ -441,9 +561,7 @@
     }
 
     // ── Deadline helpers ───────────────────────────────
-    function today() {
-      return new Date().toISOString().slice(0, 10);
-    }
+    function today() { return new Date().toISOString().slice(0, 10); }
 
     function deadlineStatus(deadline, done) {
       if (!deadline) return null;
@@ -464,9 +582,7 @@
     }
 
     function daysDiff(dateStr) {
-      const t = new Date(today());
-      const d = new Date(dateStr);
-      return Math.round((d - t) / 86400000);
+      return Math.round((new Date(dateStr) - new Date(today())) / 86400000);
     }
 
     function formatDate(dateStr) {
@@ -474,9 +590,7 @@
     }
 
     // ── Save & render ──────────────────────────────────
-    function save() {
-      localStorage.setItem('todos', JSON.stringify(todos));
-    }
+    function save() { localStorage.setItem('todos', JSON.stringify(todos)); }
 
     const PRIO_ORDER = { high: 0, medium: 1, low: 2, none: 3 };
 
@@ -495,14 +609,25 @@
         (overdueCount ? ` · ${overdueCount} verlopen` : '');
 
       let visible = todos.filter(t => {
-        if (filter === 'all')     return true;
-        if (filter === 'active')  return !t.done;
-        if (filter === 'done')    return t.done;
-        if (filter === 'overdue') return isOverdue(t);
-        return t.priority === filter;
+        // Filter op status/prioriteit
+        const passFilter = (() => {
+          if (filter === 'all')     return true;
+          if (filter === 'active')  return !t.done;
+          if (filter === 'done')    return t.done;
+          if (filter === 'overdue') return isOverdue(t);
+          return t.priority === filter;
+        })();
+        if (!passFilter) return false;
+
+        // Filter op zoekopdracht (tekst + notitie)
+        if (searchQuery) {
+          const inText = t.text.toLowerCase().includes(searchQuery);
+          const inNote = (t.note || '').toLowerCase().includes(searchQuery);
+          return inText || inNote;
+        }
+        return true;
       });
 
-      // Sort: overdue first, then priority, then deadline
       visible = [...visible].sort((a, b) => {
         const aOver = isOverdue(a) ? 0 : 1;
         const bOver = isOverdue(b) ? 0 : 1;
@@ -519,9 +644,9 @@
       emptyMsg.style.display = visible.length === 0 ? 'block' : 'none';
 
       visible.forEach(todo => {
-        const prio   = todo.priority || 'none';
-        const li     = document.createElement('li');
-        if (todo.done)      li.classList.add('done');
+        const prio = todo.priority || 'none';
+        const li   = document.createElement('li');
+        if (todo.done)       li.classList.add('done');
         if (isOverdue(todo)) li.classList.add('overdue');
 
         const badge = prio !== 'none'
@@ -530,20 +655,28 @@
 
         const dlStatus = deadlineStatus(todo.deadline, todo.done);
         const dlLabel  = deadlineLabel(todo.deadline, todo.done);
-        const dlChip   = dlLabel
-          ? `<span class="deadline-chip ${dlStatus}">${dlLabel}</span>`
-          : '';
+        const dlChip   = dlLabel ? `<span class="deadline-chip ${dlStatus}">${dlLabel}</span>` : '';
 
-        const meta = (badge || dlChip)
-          ? `<div class="task-meta">${badge}${dlChip}</div>`
-          : '';
+        const meta = (badge || dlChip) ? `<div class="task-meta">${badge}${dlChip}</div>` : '';
+
+        // Notitie weergave
+        const hasNote = todo.note && todo.note.trim();
+        const noteDisplay = hasNote
+          ? `<div class="task-note">${escapeHtml(todo.note)}</div>
+             <button class="note-toggle" onclick="toggleNoteEdit(${todo.id})">✏️ bewerken</button>`
+          : `<button class="note-toggle" onclick="toggleNoteEdit(${todo.id})">+ notitie</button>`;
 
         li.innerHTML = `
           <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggle(${todo.id})" />
           <span class="prio-dot ${prio}"></span>
           <div class="task-body">
-            <span class="task-text">${escapeHtml(todo.text)}</span>
+            <span class="task-text">${highlight(todo.text, searchQuery)}</span>
             ${meta}
+            ${noteDisplay}
+            <div class="note-edit-area" id="note-area-${todo.id}">
+              <textarea placeholder="Voeg een notitie toe..." onblur="saveNote(${todo.id}, this.value)">${escapeHtml(todo.note || '')}</textarea>
+              <button class="note-save-btn" onclick="saveNoteFromArea(${todo.id})">Opslaan</button>
+            </div>
           </div>
           <button class="delete-btn" onclick="remove(${todo.id})" title="Verwijder">✕</button>
         `;
@@ -556,43 +689,74 @@
     }
 
     function escapeHtml(str) {
+      if (!str) return '';
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ── Notities ───────────────────────────────────────
+    function toggleNoteEdit(id) {
+      const area = document.getElementById(`note-area-${id}`);
+      area.classList.toggle('open');
+      if (area.classList.contains('open')) {
+        area.querySelector('textarea').focus();
+      }
+    }
+
+    function saveNoteFromArea(id) {
+      const area = document.getElementById(`note-area-${id}`);
+      const val  = area.querySelector('textarea').value;
+      saveNote(id, val);
+      area.classList.remove('open');
+      render();
+    }
+
+    function saveNote(id, value) {
+      todos = todos.map(t => t.id === id ? { ...t, note: value.trim() } : t);
+      save();
     }
 
     // ── Actions ────────────────────────────────────────
     function addTodo() {
       const input    = document.getElementById('todo-input');
+      const noteEl   = document.getElementById('note-input');
       const deadline = document.getElementById('deadline-input').value || null;
       const text     = input.value.trim();
       if (!text) return;
-      todos.unshift({ id: Date.now(), text, done: false, priority: selectedPrio, deadline });
-      input.value = '';
+      todos.unshift({
+        id: Date.now(), text, done: false,
+        priority: selectedPrio, deadline,
+        note: noteEl.value.trim() || null,
+      });
+      input.value   = '';
+      noteEl.value  = '';
       save();
       render();
     }
 
     function toggle(id) {
       todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
-      save();
-      render();
+      save(); render();
     }
 
     function remove(id) {
       todos = todos.filter(t => t.id !== id);
-      save();
-      render();
+      save(); render();
     }
 
-    function setFilter(f) {
-      filter = f;
-      render();
-    }
+    function setFilter(f) { filter = f; render(); }
 
     function clearDone() {
       todos = todos.filter(t => !t.done);
-      save();
-      render();
+      save(); render();
     }
+
+    // Keyboard shortcut: / focust zoekbalk
+    document.addEventListener('keydown', e => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        document.getElementById('search-input').focus();
+      }
+    });
 
     document.getElementById('todo-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') addTodo();
